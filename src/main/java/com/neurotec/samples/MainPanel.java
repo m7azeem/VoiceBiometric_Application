@@ -33,12 +33,12 @@ public final class MainPanel extends JPanel implements ChangeListener {
 	// ===========================================================
 
 	public MainPanel() {
-		super(new GridLayout(1, 1));
-		try {
+		//super(new GridLayout(1, 1));
+		/*try {
 			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		initGUI();
 	}
 
@@ -47,28 +47,28 @@ public final class MainPanel extends JPanel implements ChangeListener {
 	// ===========================================================
 
 	private void initGUI() {
-		tabbedPane = new JTabbedPane();
-		tabbedPane.addChangeListener(this);
+		//tabbedPane = new JTabbedPane();
+		//tabbedPane.addChangeListener(this);
 
 		enrollFromFile = new EnrollFromFile();
-		enrollFromFile.init();
-		tabbedPane.addTab("Enroll from file", enrollFromFile);
+	//	enrollFromFile.init();
+//		tabbedPane.addTab("Enroll from file", enrollFromFile);
 
-		enrollFromMicrophone = new EnrollFromMicrophone();
-		enrollFromMicrophone.init();
-		tabbedPane.addTab("Enroll from microphone", enrollFromMicrophone);
+	//	enrollFromMicrophone = new EnrollFromMicrophone();
+//		enrollFromMicrophone.init();
+		//tabbedPane.addTab("Enroll from microphone", enrollFromMicrophone);
 
 		verifyVoice = new VerifyVoice();
 		verifyVoice.init();
-		tabbedPane.addTab("Verify voice", verifyVoice);
+//		tabbedPane.addTab("Verify voice", verifyVoice);
 
-		identifyVoice = new IdentifyVoice();
-		identifyVoice.init();
-		tabbedPane.addTab("Identify voice", identifyVoice);
+	//	identifyVoice = new IdentifyVoice();
+//		identifyVoice.init();
+		//tabbedPane.addTab("Identify voice", identifyVoice);
 
-		add(tabbedPane);
-		setPreferredSize(new Dimension(590, 400));
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		//add(tabbedPane);
+		//setPreferredSize(new Dimension(590, 400));
+		//tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
 	// ===========================================================
@@ -94,30 +94,30 @@ public final class MainPanel extends JPanel implements ChangeListener {
 			}
 			try {
 				switch (tabbedPane.getSelectedIndex()) {
-				case 0: {
-					obtainLicenses(enrollFromFile);
-					enrollFromFile.updateVoicesTools();
-					break;
-				}
-				case 1: {
-					obtainLicenses(enrollFromMicrophone);
-					enrollFromMicrophone.updateMicrophoneList();
-					enrollFromMicrophone.updateVoicesTools();
-					break;
-				}
-				case 2: {
-					obtainLicenses(verifyVoice);
-					verifyVoice.updateVoicesTools();
-					break;
-				}
-				case 3: {
-					obtainLicenses(identifyVoice);
-					identifyVoice.updateVoicesTools();
-					break;
-				}
-				default: {
-					throw new IndexOutOfBoundsException("unreachable");
-				}
+					case 0: {
+						obtainLicenses(enrollFromFile);
+						enrollFromFile.updateVoicesTools();
+						break;
+					}
+					case 1: {
+						obtainLicenses(enrollFromMicrophone);
+						enrollFromMicrophone.updateMicrophoneList();
+						enrollFromMicrophone.updateVoicesTools();
+						break;
+					}
+					case 2: {
+						obtainLicenses(verifyVoice);
+						verifyVoice.updateVoicesTools();
+						break;
+					}
+					case 3: {
+						obtainLicenses(identifyVoice);
+						identifyVoice.updateVoicesTools();
+						break;
+					}
+					default: {
+						throw new IndexOutOfBoundsException("unreachable");
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

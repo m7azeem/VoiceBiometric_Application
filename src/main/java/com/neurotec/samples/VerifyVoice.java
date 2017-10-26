@@ -38,8 +38,8 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String SUBJECT_LEFT = "left";
-	private static final String SUBJECT_RIGHT = "right";
+	public static final String SUBJECT_LEFT = "left";
+	public static final String SUBJECT_RIGHT = "right";
 
 	private static final String LEFT_LABEL_TEXT = "First template or audio file: ";
 	private static final String RIGHT_LABEL_TEXT = "Second template or audio file: ";
@@ -91,7 +91,12 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 		licenses.add("Biometrics.VoiceExtraction");
 		licenses.add("Biometrics.VoiceMatching");
 		initGUI();
-
+		try {
+			VoicesTools.getInstance().obtainLicenses(licenses);
+		} catch (IOException e) {
+			System.out.println("error in licensing   verifyVoice>constructor");
+			e.printStackTrace();
+		}
 		subjectLeft = new NSubject();
 		subjectRight = new NSubject();
 	}
@@ -100,13 +105,13 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 	// Private methods
 	// ===========================================================
 
-	private void loadItem(String position) throws IOException {
-		fileChooser.setMultiSelectionEnabled(false);
-		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			verifyLabel.setText("");
+	public void loadItem(String position, String filePath, String fileName) throws IOException {
+		//fileChooser.setMultiSelectionEnabled(false);
+		if (true/*fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION*/) {
+			//verifyLabel.setText("");
 			NSubject subjectTmp = null;
 			try {
-				subjectTmp = NSubject.fromFile(fileChooser.getSelectedFile().getAbsolutePath());
+				subjectTmp = NSubject.fromFile(filePath/*fileChooser.getSelectedFile().getAbsolutePath()*/);
 				if (subjectTmp.getVoices().isEmpty()) {
 					subjectTmp = null;
 					throw new IllegalArgumentException("Template contains no voice records.");
@@ -119,7 +124,7 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 			// If file is not a template, try to load it as an audio file.
 			if (subjectTmp == null) {
 				NVoice voice = new NVoice();
-				voice.setFileName(fileChooser.getSelectedFile().getAbsolutePath());
+				voice.setFileName(fileName/*fileChooser.getSelectedFile().getAbsolutePath()*/);
 				subjectTmp = new NSubject();
 				subjectTmp.getVoices().add(voice);
 				updateVoicesTools();
@@ -128,17 +133,17 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 
 			if (SUBJECT_LEFT.equals(position)) {
 				subjectLeft = subjectTmp;
-				firstFileLabel.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				//firstFileLabel.setText(filePath/*fileChooser.getSelectedFile().getAbsolutePath()*/);
 			} else if (SUBJECT_RIGHT.equals(position)) {
 				subjectRight = subjectTmp;
-				secondFileLabel.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				//secondFileLabel.setText(filePath/*fileChooser.getSelectedFile().getAbsolutePath()*/);
 			} else {
 				throw new AssertionError("Unknown subject position: " + position);
 			}
 		}
 	}
 
-	private void verify() {
+	public void verify() {
 		updateVoicesTools();
 		VoicesTools.getInstance().getClient().verify(subjectLeft, subjectRight, null, verificationHandler);
 	}
@@ -149,8 +154,8 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 
 	@Override
 	protected void initGUI() {
-		GridBagConstraints gridBagConstraints;
-		setLayout(new BorderLayout());
+		//GridBagConstraints gridBagConstraints;
+		/*setLayout(new BorderLayout());
 		{
 			outerPanel = new JPanel();
 			outerPanel.setLayout(new BorderLayout());
@@ -306,31 +311,32 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 				}
 			}
 		}
-		fileChooser = new JFileChooser();
+		fileChooser = new JFileChooser();*/
 	}
 
 	@Override
 	protected void setDefaultValues() {
-		farComboBox.setSelectedItem(Utils.matchingThresholdToString(VoicesTools.getInstance().getDefaultClient().getMatchingThreshold()));
-		uniquePhraseCheckbox.setSelected(VoicesTools.getInstance().getDefaultClient().isVoicesUniquePhrasesOnly());
+	//	farComboBox.setSelectedItem(Utils.matchingThresholdToString(VoicesTools.getInstance().getDefaultClient().getMatchingThreshold()));
+	//	uniquePhraseCheckbox.setSelected(VoicesTools.getInstance().getDefaultClient().isVoicesUniquePhrasesOnly());
 	}
 
 	@Override
 	protected void updateControls() {
-		if (subjectLeft.getVoices().isEmpty() || subjectRight.getVoices().isEmpty()) {
+		/*if (subjectLeft.getVoices().isEmpty() || subjectRight.getVoices().isEmpty()) {
 			verifyButton.setEnabled(false);
 		} else {
 			verifyButton.setEnabled(true);
-		}
+		}*/
 	}
 
 	@Override
 	protected void updateVoicesTools() {
 		VoicesTools.getInstance().getClient().reset();
-		VoicesTools.getInstance().getClient().setVoicesUniquePhrasesOnly(uniquePhraseCheckbox.isSelected());
+		VoicesTools.getInstance().getClient().setVoicesUniquePhrasesOnly(false/*uniquePhraseCheckbox.isSelected()*/);
 		try {
-			VoicesTools.getInstance().getClient().setMatchingThreshold(Utils.matchingThresholdFromString(farComboBox.getSelectedItem().toString()));
+			VoicesTools.getInstance().getClient().setMatchingThreshold(Utils.matchingThresholdFromString("1 %"/*farComboBox.getSelectedItem().toString()*/));
 		} catch (ParseException e) {
+			System.out.println("error is VerifyVoice>updateVoicesTols, probably in parsing the percentage.");
 			e.printStackTrace();
 			VoicesTools.getInstance().getClient().setMatchingThreshold(VoicesTools.getInstance().getDefaultClient().getMatchingThreshold());
 			farComboBox.setSelectedItem(Utils.matchingThresholdToString(VoicesTools.getInstance().getDefaultClient().getMatchingThreshold()));
@@ -342,9 +348,9 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 	// Package private methods
 	// ===========================================================
 
-	void updateLabel(String msg) {
+	/*void updateLabel(String msg) {
 		verifyLabel.setText(msg);
-	}
+	}*/
 
 	NSubject getLeft() {
 		return subjectLeft;
@@ -366,9 +372,9 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 			} else if (ev.getSource() == verifyButton) {
 				verify();
 			} else if (ev.getSource() == openFirstButton) {
-				loadItem(SUBJECT_LEFT);
+				//loadItem(SUBJECT_LEFT);
 			} else if (ev.getSource() == openSecondButton) {
-				loadItem(SUBJECT_RIGHT);
+			//	loadItem(SUBJECT_RIGHT);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -424,7 +430,7 @@ public final class VerifyVoice extends BasePanel implements ActionListener {
 					if (status == NBiometricStatus.OK) {
 						int score = getLeft().getMatchingResults().get(0).getScore();
 						String msg = "Score of matched templates: " + score;
-						updateLabel(msg);
+//						updateLabel(msg);
 						JOptionPane.showMessageDialog(VerifyVoice.this, msg, "Match", JOptionPane.PLAIN_MESSAGE);
 					} else {
 						JOptionPane.showMessageDialog(VerifyVoice.this, "Templates didn't match.", "No match", JOptionPane.WARNING_MESSAGE);

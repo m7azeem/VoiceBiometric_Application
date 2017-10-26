@@ -3,6 +3,8 @@ package com.neurotec.samples;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -25,7 +27,26 @@ public final class SimpleVoicesApplication {
 	// ===========================================================
 
 	public static void main(String[] args) {
-		LibraryManager.initLibraryPath();
+
+		new MainPanel();
+		VerifyVoice verifyVoice = new VerifyVoice();
+		verifyVoice.init();
+		try {
+			System.out.println("hello 1");
+			verifyVoice.loadItem(VerifyVoice.SUBJECT_LEFT, "C:\\Users\\DELL\\Desktop\\micity\\tunnelProject\\rNdWorkspace\\veriSpeechTemplates\\pharseDependent\\Waleed\\onepharse_id_4", "EliasOne");
+			System.out.println("hello 2");
+			verifyVoice.loadItem(VerifyVoice.SUBJECT_RIGHT,"C:\\Users\\DELL\\Desktop\\micity\\tunnelProject\\rNdWorkspace\\veriSpeechTemplates\\pharseDependent\\Waleed\\onepharse_id_4", "FadwaOne");
+			System.out.println("hello 3");
+			verifyVoice.verify();
+			System.out.println("hello 4");
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+		/*LibraryManager.initLibraryPath();
 
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -46,7 +67,7 @@ public final class SimpleVoicesApplication {
 				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
 			}
-		});
+		});*/
 	}
 
 }
