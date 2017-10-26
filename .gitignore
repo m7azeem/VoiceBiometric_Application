@@ -1,0 +1,20 @@
+# using maven, hence ignoring gradle files/folders
+
+.gradle/
+
+# intelliJ folder
+.idea/
+
+.settings/
+_doc/
+bin/
+build/
+out/
+target/
+.classpath
+.project
+build.gradle
+settings.gradle
+
+# intelliJ file
+simple-voices-sample.iml
