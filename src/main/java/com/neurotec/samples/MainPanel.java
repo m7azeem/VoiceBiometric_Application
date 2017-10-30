@@ -23,9 +23,7 @@ public final class MainPanel extends JPanel implements ChangeListener {
 	// ===========================================================
 
 	private JTabbedPane tabbedPane;
-	private EnrollFromFile enrollFromFile;
 	private EnrollFromMicrophone enrollFromMicrophone;
-	private VerifyVoice verifyVoice;
 	private IdentifyVoice identifyVoice;
 
 	// ===========================================================
@@ -50,17 +48,9 @@ public final class MainPanel extends JPanel implements ChangeListener {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addChangeListener(this);
 
-		enrollFromFile = new EnrollFromFile();
-		enrollFromFile.init();
-		tabbedPane.addTab("Enroll from file", enrollFromFile);
-
 		enrollFromMicrophone = new EnrollFromMicrophone();
 		enrollFromMicrophone.init();
 		tabbedPane.addTab("Enroll from microphone", enrollFromMicrophone);
-
-		verifyVoice = new VerifyVoice();
-		verifyVoice.init();
-		tabbedPane.addTab("Verify voice", verifyVoice);
 
 		identifyVoice = new IdentifyVoice();
 		identifyVoice.init();
@@ -95,22 +85,12 @@ public final class MainPanel extends JPanel implements ChangeListener {
 			try {
 				switch (tabbedPane.getSelectedIndex()) {
 				case 0: {
-					obtainLicenses(enrollFromFile);
-					enrollFromFile.updateVoicesTools();
-					break;
-				}
-				case 1: {
 					obtainLicenses(enrollFromMicrophone);
 					enrollFromMicrophone.updateMicrophoneList();
 					enrollFromMicrophone.updateVoicesTools();
 					break;
 				}
 				case 2: {
-					obtainLicenses(verifyVoice);
-					verifyVoice.updateVoicesTools();
-					break;
-				}
-				case 3: {
 					obtainLicenses(identifyVoice);
 					identifyVoice.updateVoicesTools();
 					break;
