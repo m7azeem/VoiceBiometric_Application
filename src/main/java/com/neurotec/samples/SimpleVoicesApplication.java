@@ -14,6 +14,7 @@ import com.neurotec.samples.util.Utils;
 
 public final class SimpleVoicesApplication {
 
+	//variables for Registration GUI
 	JFrame recorderFrame;
 	JPanel recorderHomePanel;
 	JLabel userRegistrationLabel;
@@ -61,12 +62,11 @@ public final class SimpleVoicesApplication {
 
 
 		final SimpleVoicesApplication simpleVoicesApplication = new SimpleVoicesApplication();
-		simpleVoicesApplication.initGUI();
+		simpleVoicesApplication.initRegistrationGUI();
 		//simpleVoicesApplication.setup();
 	}
 
-	public void initGUI(){
-		//clean gui
+	public void initRegistrationGUI(){
 		recorderFrame = new JFrame();
 		recorderFrame.setTitle("Voice registration");
 		recorderFrame.setIconImage(Utils.createIconImage("images/Logo16x16.png"));
