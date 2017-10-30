@@ -57,8 +57,12 @@ public final class SimpleVoicesApplication {
 			}
 		});
 */
+		LibraryManager.initLibraryPath();
+
+
 		final SimpleVoicesApplication simpleVoicesApplication = new SimpleVoicesApplication();
 		simpleVoicesApplication.initGUI();
+		//simpleVoicesApplication.setup();
 	}
 
 	public void initGUI(){
@@ -102,8 +106,20 @@ public final class SimpleVoicesApplication {
 			public void actionPerformed( ActionEvent actionEvent ){
 				//connect method to start recording, extracting template, saving.
 				textToReadLabel.setText(nameField.getText());
-				new WriteXMLFile().doSometing();
+				//new WriteXMLFile().doSometing();
+				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
+				if(enrollVoiceFromMicrophone.start(nameField.getText())){
+					textToReadLabel.setText(nameField.getText()+ " enrolled.");
+				} else {
+					textToReadLabel.setText("enrollment failed");
+				}
 			}
 		});
+	}
+
+	public void setup(){
+		//RegisterFromMicrophone registerFromMicrophone = new RegisterFromMicrophone();
+		//registerFromMicrophone.init();
+		MainPanel mainPanel = new MainPanel();
 	}
 }

@@ -4,13 +4,11 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public final class MainPanel extends JPanel implements ChangeListener {
+public final class MainPanel implements ChangeListener {
 
 	// ===========================================================
 	// Static fields
@@ -31,34 +29,8 @@ public final class MainPanel extends JPanel implements ChangeListener {
 	// ===========================================================
 
 	public MainPanel() {
-		super(new GridLayout(1, 1));
-		try {
-			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		initGUI();
-	}
-
-	// ===========================================================
-	// Private methods
-	// ===========================================================
-
-	private void initGUI() {
-		tabbedPane = new JTabbedPane();
-		tabbedPane.addChangeListener(this);
-
 		enrollFromMicrophone = new EnrollFromMicrophone();
 		enrollFromMicrophone.init();
-		tabbedPane.addTab("Enroll from microphone", enrollFromMicrophone);
-
-		identifyVoice = new IdentifyVoice();
-		identifyVoice.init();
-		tabbedPane.addTab("Identify voice", identifyVoice);
-
-		add(tabbedPane);
-		setPreferredSize(new Dimension(590, 400));
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
 	// ===========================================================
@@ -101,7 +73,7 @@ public final class MainPanel extends JPanel implements ChangeListener {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Could not obtain licenses for components: " + e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Could not obtain licenses for components: " + e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

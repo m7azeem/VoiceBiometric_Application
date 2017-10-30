@@ -21,3 +21,6 @@ simple-voices-sample.iml
 
 # storage file
 userTemplates.xml
+
+#contains voice data
+data/
