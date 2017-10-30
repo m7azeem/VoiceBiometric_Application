@@ -10,22 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -96,6 +81,10 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 	private JButton startButton;
 	private JButton stopButton;
 
+
+	private JTextField nameField;
+	private JLabel readingTextLabel;
+
 	// ===========================================================
 	// Public constructor
 	// ===========================================================
@@ -129,9 +118,9 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 		}
 		// Set voice capture from stream.
 		voice = new NVoice();
-		voice.setPhraseID((Integer) phraseIdSpinner.getValue());
+		voice.setPhraseID(getNextPhraseID());
 		EnumSet<NBiometricCaptureOption> options = EnumSet.of(NBiometricCaptureOption.STREAM);
-		if (!cbAutomatic.isSelected()) {
+		if (false/*!cbAutomatic.isSelected()*/) {
 			options.add(NBiometricCaptureOption.MANUAL);
 		}
 		voice.setCaptureOptions(options);
@@ -234,7 +223,7 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 						}
 						{
 							stopButton = new JButton();
-							stopButton.setText("Stop");
+							stopButton.setText("Cancel");
 							stopButton.setEnabled(false);
 							stopButton.setPreferredSize(new Dimension(87, 23));
 							stopButton.addActionListener(this);
@@ -300,6 +289,13 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 							cbAutomatic.setSelected(true);
 							cbAutomatic.setText("Capture automatically");
 							optionsPanel.add(cbAutomatic);
+							nameField = new JTextField("Enter your name");
+							optionsPanel.add(nameField);
+
+							readingTextLabel = new JLabel();
+							readingTextLabel.setText(getNextPhrase());
+							optionsPanel.add(readingTextLabel);
+
 						}
 					}
 				}
@@ -350,7 +346,7 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 	protected void updateControls() {
 		startButton.setEnabled(!recording);
 		stopButton.setEnabled(recording);
-		btnForce.setEnabled(recording && !cbAutomatic.isSelected());
+		btnForce.setEnabled(recording && !false/*cbAutomatic.isSelected()*/);
 		refreshButton.setEnabled(!recording);
 		saveTemplateButton.setEnabled(!recording && (subject != null) && (subject.getStatus() == NBiometricStatus.OK));
 		saveVoiceButton.setEnabled(!recording && (subject != null) && (subject.getStatus() == NBiometricStatus.OK));
@@ -471,5 +467,24 @@ public final class EnrollFromMicrophone extends BasePanel implements ActionListe
 		}
 
 	}
+
+	// ===========================================================
+	// Helper functions //m7azeem
+	// ===========================================================
+
+	private int getNextPhraseID(){
+		//should retrive next phrase-ID from persistant storage.
+		return (Integer) phraseIdSpinner.getValue();
+	}
+
+	private String getNextPhrase(){
+		//should retrieve next phrase from persistant storage. or from name, etc
+		//This should be something like: hello, I am [name] //avoid private info, including name//find a proper usecase.
+		//a little long enough sentence.
+		return "Hello, I am Mr. Me.";
+	}
+
+
+
 
 }
