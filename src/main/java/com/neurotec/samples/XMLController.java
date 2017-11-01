@@ -1,6 +1,7 @@
 package com.neurotec.samples;
 
 import java.io.File;
+import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,7 +10,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.*;
 
 public class XMLController {
@@ -46,12 +46,12 @@ public class XMLController {
             user.appendChild(passPhrase);
 
             // passphrase elements
-            Element audio = doc.createElement("audio");
+            Element audio = doc.createElement("soundFile");
             audio.appendChild(doc.createTextNode("[path to mp3 file]"));
             user.appendChild(audio);
 
             // passphrase elements
-            Element template = doc.createElement("template");
+            Element template = doc.createElement("templateFile");
             template.appendChild(doc.createTextNode("[path to template file]"));
             user.appendChild(template);
 
@@ -76,7 +76,7 @@ public class XMLController {
     }
 
     //read all XML document data and load it.
-    public void readXMLData(){
+    public ArrayList<User> readXMLData(){
         try {
             File fXmlFile = new File("userTemplates.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -92,27 +92,31 @@ public class XMLController {
             NodeList nList = doc.getElementsByTagName("user");
 
             System.out.println("----------------------------");
+            ArrayList<User> users = new ArrayList<User>();
 
             for (int temp = 0; temp < nList.getLength(); temp++) {
+                User user = new User();
 
                 Node nNode = nList.item(temp);
 
                 System.out.println("\nCurrent Element :" + nNode.getNodeName());
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
                     Element eElement = (Element) nNode;
-
-                    System.out.println("User id : " + eElement.getAttribute("id"));
-                    System.out.println("Name : " + eElement.getElementsByTagName("name").item(0).getTextContent());
-                    // get passphrase as well.
-                    System.out.println("SoundFile path: " + eElement.getElementsByTagName("audio").item(0).getTextContent());
-                    System.out.println("Template path: " + eElement.getElementsByTagName("template").item(0).getTextContent());
-
+                    user.id = Integer.parseInt(eElement.getAttribute("id"));
+                    user.name = eElement.getElementsByTagName("name").item(0).getTextContent();
+                    //get passphrase as well.
+                    user.passphrase = eElement.getElementsByTagName("passphrase").item(0).getTextContent();
+                    user.phraseId = Integer.parseInt(((Element) eElement.getElementsByTagName("passphrase").item(0)).getAttribute("phrase_id"));
+                    user.soundFile = eElement.getElementsByTagName("soundFile").item(0).getTextContent();
+                    user.templateFile = eElement.getElementsByTagName("templateFile").item(0).getTextContent();
+                    users.add(user);
                 }
             }
+            return users;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

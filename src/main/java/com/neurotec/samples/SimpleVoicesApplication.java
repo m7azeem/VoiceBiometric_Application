@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.*;
@@ -72,8 +73,8 @@ public final class SimpleVoicesApplication {
 		//simpleVoicesApplication.initRegistrationGUI();
 		//simpleVoicesApplication.initIdentificationGUI();
 		XMLController xmlController = new XMLController();
+		xmlController.makeNewXMLDocument();
 		xmlController.readXMLData();
-
 	}
 
 	public void initRegistrationGUI(){
@@ -183,7 +184,7 @@ public final class SimpleVoicesApplication {
 				identificationTextToReadLabel.setText("sample text here. My name is [name]");
 
 
-				//need to generate audio file of test subject using the EnrollVoiceFromMicrophone class.
+				//need to generate sound file of test subject using the EnrollVoiceFromMicrophone class.
 				// then save this file in a testing folder, then pass as to the identification method.
 				//also, need to loop through the files in the registrations/sounds folder and pass them here.
 				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();

@@ -1,5 +1,7 @@
 package com.neurotec.samples;
 
+import java.util.ArrayList;
+
 public class DataAccessObject {
 
     public DataAccessObject(){
@@ -21,11 +23,11 @@ public class DataAccessObject {
     }
 
     public boolean loadTemplates(){
-
+        //get templates from storage and enroll them.
         return false;
     }
 
-    //saves the current test-template and its test-sound.
+    //saves the current test-templateFile and its test-sound.
     public boolean saveTest(){
         return false;
     }
