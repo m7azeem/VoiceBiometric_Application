@@ -24,7 +24,7 @@ public final class EnrollVoiceFromMicrophone {
     public EnrollVoiceFromMicrophone() {
     }
 
-    public boolean start(String username) {
+    public boolean start(String username, String path) {
         boolean success = false;
         final String components = "Devices.Microphones,Biometrics.VoiceExtraction";
 
@@ -38,7 +38,8 @@ public final class EnrollVoiceFromMicrophone {
         try {
             if (!NLicense.obtainComponents("/local", 5000, components)) {
                 System.err.format("Could not obtain licenses for components: %s%n", components);
-                System.exit(-1);
+                //System.exit(-1);
+                return success;
             }
 
             biometricClient = new NBiometricClient();
@@ -86,7 +87,7 @@ public final class EnrollVoiceFromMicrophone {
 
             if (status == NBiometricStatus.OK) {
                 System.out.println("Template extracted");
-                String path = "data/registration/";
+                //String path = "data/registration/";
                 subject.getVoices().get(1).getSoundBuffer().save(path+"soundFiles/" +username);
                 System.out.println("Voice audio file saved successfully...");
 
