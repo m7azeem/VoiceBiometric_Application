@@ -70,7 +70,9 @@ public final class SimpleVoicesApplication {
 		//working code for registration gui
 		final SimpleVoicesApplication simpleVoicesApplication = new SimpleVoicesApplication();
 		//simpleVoicesApplication.initRegistrationGUI();
-		simpleVoicesApplication.initIdentificationGUI();
+		//simpleVoicesApplication.initIdentificationGUI();
+		XMLController xmlController = new XMLController();
+		xmlController.readXMLData();
 
 	}
 
@@ -114,7 +116,7 @@ public final class SimpleVoicesApplication {
 			public void actionPerformed( ActionEvent actionEvent ){
 				//connect method to start recording, extracting template, saving.
 				textToReadLabel.setText(nameField.getText());
-				//new WriteXMLFile().doSometing();
+				//new XMLController().makeNewXMLDocument();
 				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
 				if(enrollVoiceFromMicrophone.start(nameField.getText(), "data/registration/")){
 					textToReadLabel.setText(nameField.getText()+ " enrolled.");

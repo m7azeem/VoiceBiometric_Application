@@ -10,13 +10,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
-public class WriteXMLFile {
+public class XMLController {
 
-    public void doSometing() {
+    //initialize.
+    public void makeNewXMLDocument() {
 
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -33,16 +32,16 @@ public class WriteXMLFile {
 
 
             // set attribute to user element
-            user.setAttribute("id", "1");
+            user.setAttribute("id", "-1");
 
             // name elements
             Element name = doc.createElement("name");
-            name.appendChild(doc.createTextNode("My name"));
+            name.appendChild(doc.createTextNode("init-user"));
             user.appendChild(name);
 
             // passphrase elements
             Element passPhrase = doc.createElement("passphrase");
-            passPhrase.setAttribute("phrase_id", "1");
+            passPhrase.setAttribute("phrase_id", "-1");
             passPhrase.appendChild(doc.createTextNode("Hello I am [name] [name]"));
             user.appendChild(passPhrase);
 
@@ -73,6 +72,47 @@ public class WriteXMLFile {
             pce.printStackTrace();
         } catch (TransformerException tfe) {
             tfe.printStackTrace();
+        }
+    }
+
+    //read all XML document data and load it.
+    public void readXMLData(){
+        try {
+            File fXmlFile = new File("userTemplates.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
+
+            //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+            doc.getDocumentElement().normalize();
+
+            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+
+            NodeList nList = doc.getElementsByTagName("user");
+
+            System.out.println("----------------------------");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+
+                Node nNode = nList.item(temp);
+
+                System.out.println("\nCurrent Element :" + nNode.getNodeName());
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element eElement = (Element) nNode;
+
+                    System.out.println("User id : " + eElement.getAttribute("id"));
+                    System.out.println("Name : " + eElement.getElementsByTagName("name").item(0).getTextContent());
+                    // get passphrase as well.
+                    System.out.println("SoundFile path: " + eElement.getElementsByTagName("audio").item(0).getTextContent());
+                    System.out.println("Template path: " + eElement.getElementsByTagName("template").item(0).getTextContent());
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

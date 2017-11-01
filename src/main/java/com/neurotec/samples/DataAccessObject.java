@@ -6,7 +6,9 @@ public class DataAccessObject {
 
     }
     public boolean initializeStorage(){
-        return false;
+        XMLController XMLController = new XMLController();
+        XMLController.makeNewXMLDocument();
+        return true;
     }
 
     public boolean enrollUser(){
@@ -19,6 +21,7 @@ public class DataAccessObject {
     }
 
     public boolean loadTemplates(){
+
         return false;
     }
 
