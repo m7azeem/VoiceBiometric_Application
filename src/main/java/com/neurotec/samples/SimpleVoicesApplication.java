@@ -137,6 +137,7 @@ public final class SimpleVoicesApplication {
 	JFrame identificationFrame;
 	JPanel identificationHomePanel;
 	JLabel identificationLabel;
+	JLabel identificationTextToReadLabel;
 	JButton identifyBtn;
 
 	public void initIdentificationGUI(){
@@ -154,7 +155,11 @@ public final class SimpleVoicesApplication {
 			}
 		});
 
-		identificationHomePanel = new JPanel( new GridLayout(2, 1));
+		identificationHomePanel = new JPanel( new GridLayout(3, 1));
+
+		identificationTextToReadLabel = new JLabel("Text to read will appear here.");
+		identificationTextToReadLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		identificationHomePanel.add(identificationTextToReadLabel);
 
 		identificationLabel = new JLabel("Status");
 		identificationLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -172,13 +177,15 @@ public final class SimpleVoicesApplication {
 
 		identifyBtn.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent actionEvent ){
+				//get text from DB and display. also need to match the user. so there should be someway to know who the user is.
+				identificationTextToReadLabel.setText("sample text here. My name is [name]");
+
 
 				//need to generate audio file of test subject using the EnrollVoiceFromMicrophone class.
 				// then save this file in a testing folder, then pass as to the identification method.
 				//also, need to loop through the files in the registrations/sounds folder and pass them here.
 				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
 				String fileName = "TestCase"+new Date().getTime();//new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-
 
 				if(enrollVoiceFromMicrophone.start(fileName, "data/testing/")){
 					identificationLabel.setText("Template Extracted");
