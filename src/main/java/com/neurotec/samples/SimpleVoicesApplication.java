@@ -75,6 +75,9 @@ public final class SimpleVoicesApplication {
 		XMLController xmlController = new XMLController();
 		xmlController.makeNewXMLDocument();
 		xmlController.readXMLData();
+
+		User person = new User(0, "M7", "It's a me.", 0, "M7sound", "M7template");
+		xmlController.addUser(person);
 	}
 
 	public void initRegistrationGUI(){

@@ -1,6 +1,7 @@
 package com.neurotec.samples;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -10,6 +11,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import jdk.internal.org.xml.sax.SAXException;
 import org.w3c.dom.*;
 
 public class XMLController {
@@ -76,7 +79,7 @@ public class XMLController {
     }
 
     //read all XML document data and load it.
-    public ArrayList<User> readXMLData(){
+    public ArrayList<User> readXMLData() {
         try {
             File fXmlFile = new File("userTemplates.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -118,5 +121,72 @@ public class XMLController {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    public boolean addUser(User person) {
+        //load stuff
+        String filepath = "userTemplates.xml";
+
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(filepath);
+
+            // Get the root element
+            Node voices = doc.getFirstChild();
+            //call another funciton to prepare new node
+
+            //add the enw node
+            voices.appendChild(createXMLNode(doc, person));
+
+            // write the updated content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File(filepath));
+            transformer.transform(source, result);
+            return true;
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        } catch (TransformerException tfe) {
+            tfe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (org.xml.sax.SAXException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+    public Node createXMLNode(Document doc , User person) throws ParserConfigurationException {
+        // user elements
+        Element user = doc.createElement("user");
+        // set attribute to user element
+        user.setAttribute("id", String.valueOf(person.id));
+
+        // name elements
+        Element name = doc.createElement("name");
+        name.appendChild(doc.createTextNode(person.name));
+        user.appendChild(name);
+
+        // passphrase elements
+        Element passPhrase = doc.createElement("passphrase");
+        passPhrase.setAttribute("phrase_id", String.valueOf(person.phraseId));
+        passPhrase.appendChild(doc.createTextNode(person.passphrase));
+        user.appendChild(passPhrase);
+
+        // passphrase elements
+        Element audio = doc.createElement("soundFile");
+        audio.appendChild(doc.createTextNode(person.soundFile));
+        user.appendChild(audio);
+
+        // passphrase elements
+        Element template = doc.createElement("templateFile");
+        template.appendChild(doc.createTextNode(person.templateFile));
+        user.appendChild(template);
+        return user;
     }
 }

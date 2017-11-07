@@ -7,14 +7,16 @@ public class DataAccessObject {
     public DataAccessObject(){
 
     }
+
     public boolean initializeStorage(){
         XMLController XMLController = new XMLController();
         XMLController.makeNewXMLDocument();
         return true;
     }
 
-    public boolean enrollUser(){
-        return false;
+    public boolean enrollUser(User person){
+        XMLController XMLController = new XMLController();
+        return XMLController.addUser(person);
     }
 
     //returns -1 if no old passphraseID found.
