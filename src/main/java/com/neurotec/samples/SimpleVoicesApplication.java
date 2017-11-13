@@ -80,6 +80,7 @@ public final class SimpleVoicesApplication {
 	}
 
 	public void initRegistrationGUI(){
+		final XMLController xmlController = new XMLController();
 		recorderFrame = new JFrame();
 		recorderFrame.setTitle("Voice registration");
 		recorderFrame.setIconImage(Utils.createIconImage("images/Logo16x16.png"));
@@ -117,7 +118,7 @@ public final class SimpleVoicesApplication {
 
 		final EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
 
-		textToReadLabel.setText("After clicking Start. Read the generated text here.");
+		textToReadLabel.setText("Passphrase:"+xmlController.getNextPassphrase());
 		startBtn.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent actionEvent ){
 				startBtn.setEnabled(false);
@@ -130,6 +131,10 @@ public final class SimpleVoicesApplication {
 				} else {
 					textToReadLabel.setText("enrollment failed");
 				}
+
+				User person = new User(xmlController.getLatestID() +1, nameField.getText(), xmlController.getNextPassphrase(), 0, "M7sound", "data/registration/"+nameField.getText());
+				xmlController.addUser(person);
+
 				startBtn.setEnabled(true);
 			}
 		});

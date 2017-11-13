@@ -1,6 +1,8 @@
 package com.neurotec.samples;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
@@ -188,5 +190,33 @@ public class XMLController {
         template.appendChild(doc.createTextNode(person.templateFile));
         user.appendChild(template);
         return user;
+    }
+
+    public int getLatestID(){
+        ArrayList personsOfInterest = readXMLData();
+        return ((User) personsOfInterest.get(personsOfInterest.size()-1)).id;
+    }
+
+    public String getNextPassphrase(){
+        String out = "some passphrase here";
+        int nextID = getLatestID()+1;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("passphrases.txt"));
+            int linesRead = 0;
+            String line = br.readLine();
+
+            while (line != null) {
+                out=line;
+                line = br.readLine();
+                linesRead++;
+                if(linesRead==nextID){
+                    break;
+                }
+            }
+            br.close();
+            return out;
+        } catch (IOException e) {
+            return out;
+        }
     }
 }
