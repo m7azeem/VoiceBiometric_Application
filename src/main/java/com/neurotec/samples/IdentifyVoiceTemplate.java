@@ -51,6 +51,16 @@ public class IdentifyVoiceTemplate {
             }
 
             biometricClient = new NBiometricClient();
+
+            /*
+            If you need to control the length of phrase said,
+            then you can limit it by using properties “Voices.MinimalPhraseDurationRaw"
+            and "Voices.MaximalPhraseDurationRaw" set by using NBiometricClient.setProperty() method and define the
+            durations in miliseconds.
+
+            example:
+            //biometricClient.setVoicesMaximalLoadedFileSize(5000);
+            */
             probeSubject = createSubject(args[0], "ProbeSubject");
 
             NBiometricStatus status = biometricClient.createTemplate(probeSubject);
