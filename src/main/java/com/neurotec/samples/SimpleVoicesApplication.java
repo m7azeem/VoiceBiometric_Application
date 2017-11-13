@@ -67,17 +67,16 @@ public final class SimpleVoicesApplication {
 
 		LibraryManager.initLibraryPath();
 
-
 		//working code for registration gui
 		final SimpleVoicesApplication simpleVoicesApplication = new SimpleVoicesApplication();
-		//simpleVoicesApplication.initRegistrationGUI();
+		simpleVoicesApplication.initRegistrationGUI();
 		//simpleVoicesApplication.initIdentificationGUI();
-		XMLController xmlController = new XMLController();
+/*		XMLController xmlController = new XMLController();
 		xmlController.makeNewXMLDocument();
 		xmlController.readXMLData();
 
 		User person = new User(0, "M7", "It's a me.", 0, "M7sound", "M7template");
-		xmlController.addUser(person);
+		xmlController.addUser(person);*/
 	}
 
 	public void initRegistrationGUI(){
@@ -106,7 +105,7 @@ public final class SimpleVoicesApplication {
 		recorderHomePanel.add(namePanel);
 
 		startBtn = new JButton("Start");
-		textToReadLabel = new JLabel("After clicking Start. Read the generated text here.");
+		textToReadLabel = new JLabel("Initializing                                                                                            ");
 
 		recorderHomePanel.add(startBtn);
 		recorderHomePanel.add(textToReadLabel);
@@ -116,17 +115,22 @@ public final class SimpleVoicesApplication {
 		recorderFrame.setLocationRelativeTo(null);
 		recorderFrame.setVisible(true);
 
+		final EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
+
+		textToReadLabel.setText("After clicking Start. Read the generated text here.");
 		startBtn.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent actionEvent ){
+				startBtn.setEnabled(false);
 				//connect method to start recording, extracting template, saving.
 				textToReadLabel.setText(nameField.getText());
 				//new XMLController().makeNewXMLDocument();
-				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
+
 				if(enrollVoiceFromMicrophone.start(nameField.getText(), "data/registration/")){
 					textToReadLabel.setText(nameField.getText()+ " enrolled.");
 				} else {
 					textToReadLabel.setText("enrollment failed");
 				}
+				startBtn.setEnabled(true);
 			}
 		});
 	}
@@ -146,6 +150,9 @@ public final class SimpleVoicesApplication {
 	JLabel identificationTextToReadLabel;
 	JButton identifyBtn;
 
+	//helper vars used during threading
+	static boolean extractionComplete;
+	static String fileName;
 	public void initIdentificationGUI(){
 		//read from microphone, save, have handle of username,
 		//add path/username to list[0]
@@ -162,8 +169,8 @@ public final class SimpleVoicesApplication {
 		});
 
 		identificationHomePanel = new JPanel( new GridLayout(3, 1));
+		identificationTextToReadLabel = new JLabel("Initializing                                                                                            ");
 
-		identificationTextToReadLabel = new JLabel("Text to read will appear here.");
 		identificationTextToReadLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		identificationHomePanel.add(identificationTextToReadLabel);
 
@@ -181,8 +188,13 @@ public final class SimpleVoicesApplication {
 		identificationFrame.setLocationRelativeTo(null);
 		identificationFrame.setVisible(true);
 
+		final EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
+		identificationTextToReadLabel.setText("Text to read will appear here.");
+
 		identifyBtn.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent actionEvent ){
+
+
 				//get text from DB and display. also need to match the user. so there should be someway to know who the user is.
 				identificationTextToReadLabel.setText("sample text here. My name is [name]");
 
@@ -190,29 +202,49 @@ public final class SimpleVoicesApplication {
 				//need to generate sound file of test subject using the EnrollVoiceFromMicrophone class.
 				// then save this file in a testing folder, then pass as to the identification method.
 				//also, need to loop through the files in the registrations/sounds folder and pass them here.
-				EnrollVoiceFromMicrophone enrollVoiceFromMicrophone = new EnrollVoiceFromMicrophone();
-				String fileName = "TestCase"+new Date().getTime();//new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
-				if(enrollVoiceFromMicrophone.start(fileName, "data/testing/")){
-					identificationLabel.setText("Template Extracted");
 
-					//loop through all the files in the directory/database//later use db for this.
-					//put everything in the array.
-					File registrationSoundsFolder = new File("data/registration/soundFiles/");
-					String[] files = new String[registrationSoundsFolder.listFiles().length+1];
-					files[0] = "data/testing/SoundFiles/"+fileName;
-					int i=1;
-					for (final File fileEntry : registrationSoundsFolder.listFiles()) {
-							files[i] = "data/registration/soundFiles/" + fileEntry.getName();
-							i++;
+				identificationLabel.setText("recording");
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						fileName = "TestCase"+new Date().getTime();//new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+						extractionComplete = enrollVoiceFromMicrophone.start(fileName, "data/testing/");
+						if(extractionComplete){
+							identificationLabel.setText("Template Extracted. Now processing.");
+						} else {
+							identificationLabel.setText("Not enough features");
+						}
 					}
-					IdentifyVoiceTemplate identifyVoiceTemplate = new IdentifyVoiceTemplate();
-					//String[] sounds = { "data/registration/soundFiles/Tushar1Oct30", "data/registration/soundFiles/Oct30Test1", "data/registration/soundFiles/Tushar2Oct30"};
-					//String[] templates = { "data/registration/templateFiles/Tushar1Oct30", "data/registration/templateFiles/Oct30Test1", "data/registration/templateFiles/Tushar2Oct30"};
-					identifyVoiceTemplate.identify(files);
-				} else {
-					identificationLabel.setText("Not enough features");
-				}
+				});
+
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if(extractionComplete){
+							//loop through all the files in the directory/database//later use db for this.
+							//put everything in the array.
+							File registrationSoundsFolder = new File("data/registration/soundFiles/");
+							String[] files = new String[registrationSoundsFolder.listFiles().length+1];
+							files[0] = "data/testing/SoundFiles/"+fileName;
+							int i=1;
+							for (final File fileEntry : registrationSoundsFolder.listFiles()) {
+								files[i] = "data/registration/soundFiles/" + fileEntry.getName();
+								i++;
+							}
+							IdentifyVoiceTemplate identifyVoiceTemplate = new IdentifyVoiceTemplate();
+							//String[] sounds = { "data/registration/soundFiles/Tushar1Oct30", "data/registration/soundFiles/Oct30Test1", "data/registration/soundFiles/Tushar2Oct30"};
+							//String[] templates = { "data/registration/templateFiles/Tushar1Oct30", "data/registration/templateFiles/Oct30Test1", "data/registration/templateFiles/Tushar2Oct30"};
+							String userIdentified= null;
+							userIdentified = identifyVoiceTemplate.identify(files);
+							if (userIdentified != null){
+								identificationLabel.setText(userIdentified);
+							} else {
+								identificationLabel.setText("user not identified");
+							}
+						}
+					}
+				});
+				identifyBtn.setEnabled(true);
 			}
 		});
 

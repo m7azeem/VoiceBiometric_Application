@@ -27,7 +27,8 @@ public class IdentifyVoiceTemplate {
 
     //requires array of fileNames. With first fileName being of the testSubject,
     // and the rest from the training data
-    public void identify(String[] args) {
+    public String identify(String[] args) {
+        String userIdentified = null;
         final String components = "Biometrics.VoiceExtraction,Biometrics.VoiceMatching";
 
         LibraryManager.initLibraryPath();
@@ -76,7 +77,8 @@ public class IdentifyVoiceTemplate {
 
             if (status == NBiometricStatus.OK) {
                 for (NMatchingResult result : probeSubject.getMatchingResults()) {
-                    System.out.format("Matched with ID: '%s' with score %d\n", result.getId(), result.getScore());
+                    userIdentified=result.getId().replace("data/registration/soundFiles/", "User:");
+                    System.out.format("Matched with ID: '%s' with score %d\n", result.getId().replace("data/registration/soundFiles/", "User:"), result.getScore());
                 }
             } else if (status == NBiometricStatus.MATCH_NOT_FOUND) {
                 System.out.format("Match not found");
@@ -92,6 +94,7 @@ public class IdentifyVoiceTemplate {
             if (probeSubject != null) probeSubject.dispose();
             if (biometricClient != null) biometricClient.dispose();
         }
+        return userIdentified;
     }
 
     private static NSubject createSubject(String fileName, String subjectId) {

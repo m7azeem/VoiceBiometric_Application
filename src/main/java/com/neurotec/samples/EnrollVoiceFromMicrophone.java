@@ -21,62 +21,76 @@ import com.neurotec.samples.util.Utils;
 
 public final class EnrollVoiceFromMicrophone {
 
-    public EnrollVoiceFromMicrophone() {
-    }
+    NBiometricClient biometricClient;
+    NSubject subject;
+    NVoice voice;
+    NBiometricTask task;
+    NDeviceManager deviceManager;
+    DeviceCollection devices;
+    final String components = "Devices.Microphones,Biometrics.VoiceExtraction";
 
-    public boolean start(String username, String path) {
-        boolean success = false;
-        final String components = "Devices.Microphones,Biometrics.VoiceExtraction";
+    public EnrollVoiceFromMicrophone() {
+        biometricClient = null;
+        subject = null;
+        voice = null;
+        task = null;
+
 
         LibraryManager.initLibraryPath();
-
-        NBiometricClient biometricClient = null;
-        NSubject subject = null;
-        NVoice voice = null;
-        NBiometricTask task = null;
 
         try {
             if (!NLicense.obtainComponents("/local", 5000, components)) {
                 System.err.format("Could not obtain licenses for components: %s%n", components);
                 //System.exit(-1);
-                return success;
+                return;
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        biometricClient = new NBiometricClient();
 
-            biometricClient = new NBiometricClient();
-            subject = new NSubject();
-            voice = new NVoice();
 
-            biometricClient.setUseDeviceManager(true);
-            NDeviceManager deviceManager = biometricClient.getDeviceManager();
 
-            deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.MICROPHONE));
+        biometricClient.setUseDeviceManager(true);
+        deviceManager = biometricClient.getDeviceManager();
 
-            deviceManager.initialize();
+        deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.MICROPHONE));
 
-            DeviceCollection devices = deviceManager.getDevices();
+        deviceManager.initialize();
 
-            if (devices.size() > 0) {
-                System.out.format("Found %d audio input devices\n", devices.size());
-            } else {
-                System.out.format("No audio input devices found\n");
-                return success;
-            }
+        devices = deviceManager.getDevices();
+
+        if (devices.size() > 0) {
+            System.out.format("Found %d audio input devices\n", devices.size());
+        } else {
+            System.out.format("No audio input devices found\n");
+            return;
+        }
 
             /*if (devices.size() > 1)
                 System.out.println("Please select microphone from the list:");*/
 
-            for (int i = 0; i < devices.size(); i++)
-                System.out.format("\t%d. %s\n", i + 1, devices.get(i).getDisplayName());
+        for (int i = 0; i < devices.size(); i++)
+            System.out.format("\t%d. %s\n", i + 1, devices.get(i).getDisplayName());
 
-            int selection = 0;
+        int selection = 0;
             /*if (devices.size() > 1) {
                 Scanner scanner = new Scanner(System.in);
                 selection = scanner.nextInt() - 1;
                 scanner.close();
             }*/
 
-            biometricClient.setVoiceCaptureDevice((NMicrophone) devices.get(selection));
+        biometricClient.setVoiceCaptureDevice((NMicrophone) devices.get(selection));
 
+    }
+
+    public boolean start(String username, String path) {
+        boolean success = false;
+
+
+        try {
+            subject = new NSubject();
+            voice = new NVoice();
             subject.getVoices().add(voice);
 
             task = biometricClient.createTask(EnumSet.of(NBiometricOperation.CAPTURE , NBiometricOperation.SEGMENT), subject);
@@ -102,10 +116,11 @@ public final class EnrollVoiceFromMicrophone {
         } catch (Throwable th) {
             //Utils.handleError(th);
             System.out.println("Error in EnrollVoiceFromMicrophone, try/catch");
+            System.out.println(th.toString());
         } finally {
             if (voice != null) voice.dispose();
             if (subject != null) subject.dispose();
-            if (biometricClient != null) biometricClient.dispose();
+            //if (biometricClient != null) biometricClient.dispose();
             return success;
 
         }
